@@ -36,14 +36,20 @@ class Task {
     obj.desc = desc;
     obj.dueDate = dueDate;
     obj.prio = prio;
+
+    return obj
   }
 
   static updatePrio(obj, prio) {
     obj.prio = prio;
+
+    return obj;
   }
 
   static updateChecked(obj, isChecked) {
     obj.isChecked = isChecked;
+
+    return obj;
   }
 }
 

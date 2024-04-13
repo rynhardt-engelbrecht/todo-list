@@ -13,7 +13,6 @@ const DOMHandler = (function initializeDOMHandler() {
   };
 
   const removeTaskFromDOM = function(msg, data) {
-    console.log(msg);
     const elementToRemove = document.querySelector(`.task-item[data-id="${data.id}"]`);
 
     elementToRemove.remove();
@@ -31,8 +30,6 @@ const DOMHandler = (function initializeDOMHandler() {
   };
 
   const removeProjectFromDOM = function(msg, data) {
-    console.log(msg);
-
     const elementToRemove = document.querySelector(`.project-item[data-id="${data.id}]`);
 
     elementToRemove.remove();
@@ -162,6 +159,10 @@ const DOMHandler = (function initializeDOMHandler() {
   };
 
   function formateDateString(dateObj) {
+    if (typeof dateObj === 'string') {
+      dateObj = new Date(dateObj);
+    }
+
     if (dateObj) {
       const day = dateObj.getDate();
 
@@ -185,14 +186,21 @@ const DOMHandler = (function initializeDOMHandler() {
 
     const optionPanel = createOptionPanel();
     const selectPriority = createElement('', 'task-prio', 'span');
-    selectPriority.appendChild(createSelect([1, 2, 3, 4], '', data.prio));
+    const select = createSelect([1, 2, 3, 4], '', data.prio);
+    const checkbox = createInput(false, 'task-check', 'checkbox');
+    selectPriority.appendChild(select);
+    if (data.isChecked) {
+      task.classList.add('complete');
+      checkbox.checked = true;
+      select.disabled = true;
+    }
 
     const taskComponents = [
       createElement(data.title, 'task-title'),
       createTextarea(data.desc, 'task-desc', true),
       createElement(formateDateString(data.dueDate), 'task-date'),
       selectPriority,
-      createInput(false, 'task-check', 'checkbox'),
+      checkbox,
       optionPanel
     ];
 
@@ -274,8 +282,7 @@ const DOMHandler = (function initializeDOMHandler() {
       select.appendChild(optionElement);
     });
 
-    const defaultIndex = options.findIndex(e => e === defaultValue);
-    select.selectedIndex = defaultIndex;
+    select.value = defaultValue;
 
     return select;
   }

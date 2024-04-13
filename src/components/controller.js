@@ -10,6 +10,14 @@ const controller = (() => {
     const prioritySelect = data.querySelector('.task-prio select');
 
     prioritySelect.addEventListener('change', () => {
+      const activeProject = JSON.parse(localStorage.getItem('active-project'));
+      let taskList = activeProject.taskList;
+      let taskObj = taskList.find(p => p.id == data.getAttribute('data-id'));
+      taskObj = Task.updatePrio(taskObj, prioritySelect.value);
+
+      activeProject.taskList[taskList.findIndex(p => p.id == data.getAttribute('data-id'))] = taskObj;
+      PubSub.publish('updateTaskList', activeProject);
+
       const selectedPrio = prioritySelect.value;
       data.setAttribute('data-prio', selectedPrio);
     })
@@ -20,6 +28,14 @@ const controller = (() => {
     const prioSelect = data.querySelector('.task-prio select')
 
     checkbox.addEventListener('change', () => {
+      const activeProject = JSON.parse(localStorage.getItem('active-project'));
+      let taskList = activeProject.taskList;
+      let taskObj = taskList.find(p => p.id == data.getAttribute('data-id'));
+      taskObj = Task.updateChecked(taskObj, checkbox.checked);
+
+      activeProject.taskList[taskList.findIndex(p => p.id == data.getAttribute('data-id'))] = taskObj;
+      PubSub.publish('updateTaskList', activeProject);
+
       data.classList.toggle('complete');
       if (prioSelect.disabled) {
         prioSelect.disabled = false;
@@ -98,6 +114,14 @@ const controller = (() => {
     });
   }
 
+  const selectProjectListener = function(msg, data) {
+    data.addEventListener('click', e => {
+      const projectList = JSON.parse(localStorage.getItem('project-list'));
+      const associatedProject = projectList[projectList.findIndex(p => p.id == data.getAttribute('data-id'))];
+      PubSub.publish('activeProjectChange', associatedProject);
+    });
+  }
+
   const addProjectToStorage = function(msg, data) {
     let storedProjectList = JSON.parse(localStorage.getItem('project-list'));
 
@@ -132,8 +156,10 @@ const controller = (() => {
   }
 
   const updateActiveProject = function(msg, data) {
-    const previouslyActive = document.querySelector('.active-project');
-    previouslyActive.classList.remove('active-project');
+    const previouslyActive = document.querySelectorAll('.active-project');
+    previouslyActive.forEach(e => {
+      e.classList.remove('active-project');
+    });
 
     localStorage.setItem('active-project', JSON.stringify(data));
     if (data) {
@@ -148,6 +174,7 @@ const controller = (() => {
       PubSub.subscribe('newTaskElement', taskCheckListener),
       PubSub.subscribe('newTaskElement', optionPanelListeners),
       PubSub.subscribe('newProjectElement', optionPanelListeners),
+      PubSub.subscribe('newProjectElement', selectProjectListener),
       PubSub.subscribe('taskFormCreated', taskFormListeners),
       PubSub.subscribe('projectFormCreated', projectFormListeners),
       PubSub.subscribe('newProject', addProjectToStorage),

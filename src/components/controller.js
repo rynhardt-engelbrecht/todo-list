@@ -2,6 +2,7 @@ const PubSub = require('pubsub-js');
 
 import Task from './task.js';
 import DOMHandler from './DOMHandler.js';
+import Project from './project.js';
 
 const controller = (() => {
 
@@ -47,6 +48,26 @@ const controller = (() => {
       const prio = data.querySelector('#prio').value;
 
       new Task(title, desc, new Date(date), prio, false, 0);
+      data.remove();
+    });
+  }
+
+  const projectFormListeners = function(msg, data) {
+    const cancelBtn = data.querySelector('.cancel-btn');
+    const submitBtn = data.querySelector('.submit-btn');
+
+    cancelBtn.addEventListener('click', e => {
+      e.preventDefault();
+
+      data.remove();
+    });
+
+    submitBtn.addEventListener('click', e => {
+      e.preventDefault();
+
+      const title = data.querySelector('#title').value;
+
+      new Project(title);
       data.remove();
     });
   }
@@ -99,13 +120,13 @@ const controller = (() => {
   const removeProjectFromStorage = function(msg, data) {
     const storedProjectList = JSON.parse(localStorage.getItem('project-list'));
 
+    const activeProject = JSON.parse(localStorage.getItem('active-project'));
     const deletedProject = storedProjectList[storedProjectList.findIndex(p => p.id == data)];
 
     const updatedList = storedProjectList.filter(p => p.id != data);
     localStorage.setItem('project-list', JSON.stringify(updatedList));
 
-    const activeProject = JSON.parse(localStorage.getItem('active-project'));
-    if (activeProject.id === deletedProject.id) {
+    if (activeProject && activeProject.id === deletedProject.id) {
       PubSub.publish('activeProjectChange', null);
     }
   }
@@ -121,6 +142,7 @@ const controller = (() => {
       PubSub.subscribe('newTaskElement', optionPanelListeners),
       PubSub.subscribe('newProjectElement', optionPanelListeners),
       PubSub.subscribe('taskFormCreated', taskFormListeners),
+      PubSub.subscribe('projectFormCreated', projectFormListeners),
       PubSub.subscribe('newProject', addProjectToStorage),
       PubSub.subscribe('activeProjectChange', updateActiveProject),
       PubSub.subscribe('updateTaskList', updateProjectInStorage),

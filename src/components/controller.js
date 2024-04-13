@@ -132,7 +132,14 @@ const controller = (() => {
   }
 
   const updateActiveProject = function(msg, data) {
+    const previouslyActive = document.querySelector('.active-project');
+    previouslyActive.classList.remove('active-project');
+
     localStorage.setItem('active-project', JSON.stringify(data));
+    if (data) {
+      const newlyActiveElement = document.querySelector(`.project-item[data-id="${data.id}"`);
+      newlyActiveElement.classList.add('active-project');
+    }
   }
 
   return {

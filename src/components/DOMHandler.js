@@ -10,8 +10,14 @@ const DOMHandler = (function initializeDOMHandler() {
 
       taskList.appendChild(taskItem);
     },
+    removeTaskFromDOM: function(msg, data) {
+      const elementToRemove = document.querySelector(`.task-item[data-id="${data.id}"]`);
+
+      elementToRemove.remove();
+    },
     subscriptions: [
       PubSub.subscribe('newTask', this.addTaskToDOM),
+      PubSub.subscribe('taskRemoved', this.removeTaskFromDOM)
     ]
   }
 

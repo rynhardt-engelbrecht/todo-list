@@ -123,8 +123,35 @@ const DOMHandler = (function initializeDOMHandler() {
     return form;
   };
 
+  const createProjectForm = function() {
+    const form = createElement('', 'project-form', 'form');
+
+    const titleInputLabel = createElement('Title', 'project-title-label', 'label');
+    const titleInput = createInput('', 'project-title-input');
+    titleInput.id = 'title';
+    titleInputLabel.setAttribute('for', titleInput.id);
+    titleInput.setAttribute('name', titleInput.id);
+
+    titleInputLabel.appendChild(titleInput);
+
+    form.appendChild(titleInputLabel)
+
+    const submitBtn = createInput('✔', 'submit-btn', 'submit');
+    form.appendChild(submitBtn);
+
+    const cancelBtn = createElement('X', 'cancel-btn', 'button');
+    form.appendChild(cancelBtn);
+
+    const body = document.querySelector('body');
+    body.appendChild(form);
+
+    PubSub.publish('projectFormCreated', form);
+    return form;
+  }
+
   return {
     createTaskForm,
+    createProjectForm,
     subscriptions: [
       PubSub.subscribe('newTask', addTaskToDOM),
       PubSub.subscribe('taskRemoved', removeTaskFromDOM),

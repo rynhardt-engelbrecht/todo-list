@@ -281,12 +281,18 @@ body {
 #add-project-container {
   position: absolute;
 
+  width: 100%;
+  display: flex;
+  justify-content: center;
+
+  background-color: inherit;
+
   bottom: 0;
   left: 50%;
 
   transform: translateX(-50%);
 
-  padding: 1em;
+  padding: 1em 0 1em 0;
 }
 
 button:hover::after {
@@ -381,7 +387,8 @@ button.delete-btn:hover::after {
   gap: 1.4em;
 }
 
-.task-form label {
+.task-form label,
+.project-form label {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -400,7 +407,8 @@ button.delete-btn:hover::after {
   grid-row: 1 / 2;
 }
 
-.task-form label * {
+.task-form label *,
+.project-form label * {
   margin-left: 1em;
 
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -424,9 +432,43 @@ button.delete-btn:hover::after {
   cursor: pointer;
 }
 
-.task-form .cancel-btn {
+.project-form .submit-btn,
+.project-form .cancel-btn {
+  width: 2.4em;
+  height: 2em;
+
+  justify-self: center;
+  align-self: center;
+
+  grid-column: 3 / 4;
+
+  cursor: pointer;
+}
+
+.task-form .cancel-btn,
+.project-form .cancel-btn {
   grid-row: 1 / 2;
 
   font-weight: bold;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.project-form {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  background-color: var(--primary-text-color);
+  color: var(--tertiary-bg-color);
+
+  border: 1px solid var(--tertiary-bg-color);
+  border-radius: 0.4em;
+
+  padding: 1.2em;
+
+  display: grid;
+  grid-template-columns: 6fr 1fr;
+  gap: 1.4em;
 }

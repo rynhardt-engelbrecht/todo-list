@@ -89,7 +89,7 @@ const DOMHandler = (function initializeDOMHandler() {
       createElement(data.title, 'task-title'),
       createTextarea(data.desc, 'task-desc', true),
       createElement(formateDateString(data.dueDate), 'task-date'),
-      createSelect([1, 2, 3, 4], 'task-prio'),
+      createSelect([1, 2, 3, 4], 'task-prio', data.prio),
       createInput(false, 'task-check', 'checkbox'),
       optionPanel
     ];
@@ -162,7 +162,7 @@ const DOMHandler = (function initializeDOMHandler() {
     return textarea;
   }
 
-  function createSelect(options = [], name = '') {
+  function createSelect(options = [], name = '', defaultValue = '') {
     const select = createElement('', name, 'select');
 
     options.forEach((option, index) => {
@@ -170,6 +170,9 @@ const DOMHandler = (function initializeDOMHandler() {
       optionElement.value = option;
       select.appendChild(optionElement);
     });
+
+    const defaultIndex = options.findIndex(e => e === defaultValue);
+    select.selectedIndex = defaultIndex;
 
     return select;
   }

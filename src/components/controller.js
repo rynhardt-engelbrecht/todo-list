@@ -1,6 +1,7 @@
 const PubSub = require('pubsub-js');
 
 import createTask from './task.js';
+import DOMHandler from './DOMHandler.js';
 
 const controller = (() => {
 
@@ -30,6 +31,7 @@ const controller = (() => {
   }
 
   const taskFormListeners = function(msg, data) {
+    console.log(msg);
     const cancelBtn = data.querySelector('.cancel-btn');
     const submitBtn = data.querySelector('.submit-btn');
 
@@ -52,10 +54,30 @@ const controller = (() => {
     });
   }
 
+  const optionPanelListeners = function(msg, data) {
+    console.log(msg);
+
+    const optionPanel = data.querySelector('.option-panel');
+    const editBtn = optionPanel.querySelector('.edit-btn');
+    const deleteBtn = optionPanel.querySelector('.delete-btn');
+    console.log(deleteBtn);
+
+    editBtn.addEventListener('click', e => {
+      const taskForm = DOMHandler.createTaskForm();
+      PubSub.publish('editTaskFormCreated', taskForm);
+    });
+
+    deleteBtn.addEventListener('click', e => {
+      data.remove();
+    });
+  }
+
   return {
     subscriptions: [
       PubSub.subscribe('newTaskElement', prioritySelectListener),
       PubSub.subscribe('newTaskElement', taskCheckListener),
+      PubSub.subscribe('newTaskElement', optionPanelListeners),
+      PubSub.subscribe('newProjectElement', optionPanelListeners),
       PubSub.subscribe('taskFormCreated', taskFormListeners)
     ],
   };

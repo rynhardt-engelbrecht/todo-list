@@ -11,3 +11,5 @@ function createProject(title = '', todoList = [], id = 0) {
 
   return obj;
 }
+
+export default createProject;

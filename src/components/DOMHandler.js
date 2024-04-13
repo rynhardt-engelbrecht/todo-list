@@ -87,9 +87,9 @@ const DOMHandler = (function initializeDOMHandler() {
 
     const taskComponents = [
       createElement(data.title, 'task-title'),
-      createElement(data.desc, 'task-desc'),
+      createTextarea(data.desc, 'task-desc', true),
       createElement(formateDateString(data.dueDate), 'task-date'),
-      createElement(data.prio, 'task-prio'),
+      createSelect([1, 2, 3, 4], 'task-prio'),
       createInput(false, 'task-check', 'checkbox'),
       optionPanel
     ];
@@ -153,6 +153,25 @@ const DOMHandler = (function initializeDOMHandler() {
     input.type = type;
 
     return input;
+  }
+
+  function createTextarea(text = '', name = '', isDisabled = true) {
+    const textarea = createElement(text, name, 'textarea');
+    textarea.disabled = isDisabled;
+
+    return textarea;
+  }
+
+  function createSelect(options = [], name = '') {
+    const select = createElement('', name, 'select');
+
+    options.forEach((option, index) => {
+      const optionElement = createElement(option, '', 'option');
+      optionElement.value = option;
+      select.appendChild(optionElement);
+    });
+
+    return select;
   }
 })();
 

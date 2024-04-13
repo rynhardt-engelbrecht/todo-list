@@ -100,6 +100,10 @@ body {
   position: relative;
 }
 
+.task-item.complete {
+  opacity: 0.36;
+}
+
 .task-item[data-prio="1"] {
   background-color: var(--1-priority-color);
 }
@@ -164,7 +168,7 @@ body {
 
   border: none;
 
-  background: none;
+  background-color: inherit;
 
   color: var(--primary-text-color);
   font-size: 1rem;
@@ -389,6 +393,8 @@ button.delete-btn:hover::after {
   align-self: center;
 
   grid-column: 3 / 4;
+
+  cursor: pointer;
 }
 
 .task-form .cancel-btn {

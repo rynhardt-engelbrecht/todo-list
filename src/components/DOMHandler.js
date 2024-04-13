@@ -27,12 +27,15 @@ const DOMHandler = (function initializeDOMHandler() {
   function createTaskElement(data) {
     const task = createElement('', 'task-item');
 
+    const optionPanel = createOptionPanel();
+
     const taskComponents = [
       createElement(data.title, 'task-title'),
       createElement(data.desc, 'task-desc'),
       createElement(data.dueDate, 'task-date'),
       createElement(data.prio, 'task-prio'),
-      createInput(false, 'task-check', 'checkbox')
+      createInput(false, 'task-check', 'checkbox'),
+      optionPanel
     ];
 
     taskComponents.forEach(e => {
@@ -42,6 +45,38 @@ const DOMHandler = (function initializeDOMHandler() {
     task.setAttribute('data-id', data.id);
 
     return task;
+  }
+
+  function createProjectElement(data) {
+    const project = createElement('', 'project-item');
+    const optionPanel = createOptionPanel();
+
+    const projectComponents = [
+      createElement(data.title, 'project-title'),
+      optionPanel
+    ]
+
+    projectComponents.forEach(e => {
+      project.appendChild(e);
+    });
+
+    project.setAttribute('data-id', data.id);
+
+    return project;
+  }
+
+  function createOptionPanel() {
+    const optionPanel = createElement('', 'option-panel');
+    const optionComponents = [
+      createElement('', 'edit-btn', 'button'),
+      createElement('', 'delete-btn', 'button')
+    ];
+
+    optionComponents.forEach(e => {
+      optionPanel.appendChild(e);
+    });
+
+    return optionPanel;
   }
 
   // streamline the creation of a new DOM element

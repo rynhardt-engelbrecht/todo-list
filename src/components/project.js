@@ -1,15 +1,17 @@
 const PubSub = require('pubsub-js');
 
-function createProject(title = '', todoList = [], id = 0) {
-  const obj = {
-    title,
-    todoList,
-    id
+class Project {
+  constructor(title = '', todoList = [], id = 0) {
+    this.title = title;
+    this.todoList = todoList;
+    this.id = id;
+
+    PubSub.publish('newProject', this);
   }
 
-  PubSub.publish('newProject', obj);
-
-  return obj;
+  static updateTitle(obj, title) {
+    obj.title = title;
+  }
 }
 
-export default createProject;
+export default Project;

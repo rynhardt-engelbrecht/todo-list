@@ -45,7 +45,7 @@ const DOMHandler = (function initializeDOMHandler() {
       const taskList = data.taskList;
       if (taskList) {
         taskList.forEach(e => {
-          addTaskToDOM('manual', e);
+          addTaskToDOM('', e);
         });
       }
 
@@ -146,7 +146,26 @@ const DOMHandler = (function initializeDOMHandler() {
     return form;
   }
 
+  const startUpDOM = function() {
+    let projectListString = localStorage.getItem('project-list');
+    projectListString = projectListString === 'undefined' ? 'null' : projectListString;
+    let activeProjectString = localStorage.getItem('active-project');
+    activeProjectString = activeProjectString === 'undefined' ? 'null' : activeProjectString;
+
+    const projectList = JSON.parse(projectListString);
+    const activeProject = JSON.parse(activeProjectString);
+
+    if (projectList) {
+      projectList.forEach(e => {
+        addProjectToDOM('', e);
+      });
+    }
+
+    displayActiveProject('', activeProject);
+  }
+
   return {
+    startUpDOM,
     createTaskForm,
     createProjectForm,
     subscriptions: [

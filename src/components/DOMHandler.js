@@ -18,11 +18,30 @@ const DOMHandler = (function initializeDOMHandler() {
       elementToRemove.remove();
       return elementToRemove;
     },
+    addProjectToDOM: function(msg, data) {
+      console.log(msg);
+
+      const projectList = document.querySelector('#project-list');
+      const projectItem = createProjectElement(data);
+
+      projectList.appendChild(projectItem);
+      return projectItem;
+    },
+    removeProjectFromDOM: function(msg, data) {
+      console.log(msg);
+
+      const elementToRemove = document.querySelector(`.project-item[data-id="${data.id}]`);
+
+      elementToRemove.remove();
+      return elementToRemove;
+    },
     subscriptions: [
       PubSub.subscribe('newTask', this.addTaskToDOM),
-      PubSub.subscribe('taskRemoved', this.removeTaskFromDOM)
+      PubSub.subscribe('taskRemoved', this.removeTaskFromDOM),
+      PubSub.subscribe('newProject', this.addProjectToDOM),
+      PubSub.subscribe('projectRemoved', this.removeProjectFromDOM),
     ]
-  }
+  };
 
   function createTaskElement(data) {
     const task = createElement('', 'task-item');

@@ -1,4 +1,4 @@
-const PubSub = require('pub-sub.js');
+const PubSub = require('pubsub-js');
 
 const DOMHandler = (function initializeDOMHandler() {
   return {

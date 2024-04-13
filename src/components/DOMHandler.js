@@ -50,6 +50,8 @@ const DOMHandler = (function initializeDOMHandler() {
       addTaskToDOM('manual', e);
     });
 
+    const projectOptionPanel = document.querySelector('#project-tab .option-panel');
+    projectOptionPanel.classList.remove('hidden');
     const projectTitle = document.querySelector('#project-title');
     projectTitle.textContent = data.title;
 
@@ -57,7 +59,61 @@ const DOMHandler = (function initializeDOMHandler() {
     projectItem.classList.add('active-project');
   };
 
+  const createTaskForm = function() {
+    const form = createElement('', 'task-form', 'form');
+    form.setAttribute('action', '#');
+    form.setAttribute('method', 'post');
+
+    const titleInputLabel = createElement('Title', 'task-title-label', 'label');
+    const titleInput = createInput('', 'task-title-input');
+    titleInput.id = 'title';
+    titleInputLabel.setAttribute('for', titleInput.id);
+    titleInput.setAttribute('name', titleInput.id);
+
+    titleInputLabel.appendChild(titleInput);
+
+    const descInputLabel = createElement('Description', 'task-desc-label', 'label');
+    const descInput = createTextarea('', 'task-desc-input', false);
+    descInput.id = 'desc';
+    descInputLabel.setAttribute('for', descInput.id);
+    descInput.setAttribute('name', descInput.id);
+
+    descInputLabel.appendChild(descInput);
+
+    const dateInputLabel = createElement('Due Date', 'task-date-label', 'label');
+    const dateInput = createInput('', 'task-date-input', 'date');
+    dateInput.id = 'date';
+    dateInputLabel.setAttribute('for', dateInput.id);
+    dateInput.setAttribute('name', dateInput.id);
+
+    dateInputLabel.appendChild(dateInput);
+
+    const prioInputLabel = createElement('Priority Level', 'task-prio-label', 'label');
+    const prioInput = createSelect([1, 2, 3, 4], 'task-prio-input', '1');
+    prioInput.id = 'prio';
+    prioInputLabel.setAttribute('for', prioInput.id);
+    prioInput.setAttribute('name', prioInput.id);
+
+    prioInputLabel.appendChild(prioInput);
+
+    const formComponents = [
+      titleInputLabel,
+      descInputLabel,
+      dateInputLabel,
+      prioInputLabel
+    ];
+
+    formComponents.forEach(e => {
+      form.appendChild(e);
+    });
+
+    const body = document.querySelector('body');
+    body.appendChild(form);
+    return form;
+  };
+
   return {
+    createTaskForm,
     subscriptions: [
       PubSub.subscribe('newTask', addTaskToDOM),
       PubSub.subscribe('taskRemoved', removeTaskFromDOM),

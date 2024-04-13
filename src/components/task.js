@@ -1,33 +1,31 @@
 const PubSub = require('pubsub-js');
 
-function createTask(title = '', desc = '', dueDate = new Date(), prio = 1, isChecked = false, id = 0) {
-  const updateInfo = (title, desc, dueDate, prio) => {
+class Task {
+  constructor(title = '', desc = '', dueDate = new Date(), prio = 1, id = 0) {
     this.title = title;
     this.desc = desc;
     this.dueDate = dueDate;
     this.prio = prio;
-  };
+    this.isChecked = false;
+    this.id = 0;
 
-  const updateChecked = (checkState) => {
-    this.checked = checkState;
+    PubSub.publish('newTask', this);
   }
 
-  const obj = {
-    title,
-    desc,
-    dueDate,
-    prio,
-    isChecked,
-    id,
-    updateInfo,
-    updateChecked,
-    subscription: PubSub.subscribe('updateTask', updateInfo)
+  static updateInfo(obj, title, desc, dueDate, prio) {
+    obj.title = title;
+    obj.desc = desc;
+    obj.dueDate = dueDate;
+    obj.prio = prio;
   }
 
-  // notify subscribers of the 'newTask' topic
-  PubSub.publish('newTask', obj);
+  static updatePrio(obj, prio) {
+    obj.prio = prio;
+  }
 
-  return obj;
+  static updateChecked(obj, isChecked) {
+    obj.isChecked = isChecked;
+  }
 }
 
-export default createTask;
+export default Task;

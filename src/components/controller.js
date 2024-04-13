@@ -1,12 +1,11 @@
 const PubSub = require('pubsub-js');
 
-import createTask from './task.js';
+import Task from './task.js';
 import DOMHandler from './DOMHandler.js';
 
 const controller = (() => {
 
   const prioritySelectListener = function(msg, data) {
-    console.log(msg);
     const prioritySelect = data.querySelector('.task-prio select');
 
     prioritySelect.addEventListener('change', () => {
@@ -16,7 +15,6 @@ const controller = (() => {
   }
 
   const taskCheckListener = function(msg, data) {
-    console.log(msg);
     const checkbox = data.querySelector('.task-check');
     const prioSelect = data.querySelector('.task-prio select')
 
@@ -31,7 +29,6 @@ const controller = (() => {
   }
 
   const taskFormListeners = function(msg, data) {
-    console.log(msg);
     const cancelBtn = data.querySelector('.cancel-btn');
     const submitBtn = data.querySelector('.submit-btn');
 
@@ -49,14 +46,12 @@ const controller = (() => {
       const date = data.querySelector('#date').value;
       const prio = data.querySelector('#prio').value;
 
-      createTask(title, desc, new Date(date), prio, false, 0);
+      new Task(title, desc, new Date(date), prio, false, 0);
       data.remove();
     });
   }
 
   const optionPanelListeners = function(msg, data) {
-    console.log(msg);
-
     const optionPanel = data.querySelector('.option-panel');
     const editBtn = optionPanel.querySelector('.edit-btn');
     const deleteBtn = optionPanel.querySelector('.delete-btn');
@@ -72,13 +67,40 @@ const controller = (() => {
     });
   }
 
+  const addProjectToStorage = function(msg, data) {
+    let storedProjectList = JSON.parse(localStorage.getItem('project-list'));
+
+    if (storedProjectList) {
+      storedProjectList.push(data);
+    } else {
+      storedProjectList = [data];
+    }
+
+    localStorage.setItem('project-list', JSON.stringify(storedProjectList));
+  };
+
+  const updateProjectInStorage = function(msg, data) {
+    const storedProjectList = JSON.parse(localStorage.getItem('project-list'));
+
+    storedProjectList[storedProjectList.findIndex(p => p.id === data.id)] = data;
+    localStorage.setItem('project-list', JSON.stringify(storedProjectList));
+  }
+
+  const removeProjectFromStorage = function(msg, data) {
+    const storedProjectList = JSON.parse(localStorage.getItem('project-list'));
+
+    updatedList = storedProjectList.filter(p => p.id !== data.id);
+    localStorage.setItem('project-list', JSON.stringify(updatedList));
+  }
+
   return {
     subscriptions: [
       PubSub.subscribe('newTaskElement', prioritySelectListener),
       PubSub.subscribe('newTaskElement', taskCheckListener),
       PubSub.subscribe('newTaskElement', optionPanelListeners),
       PubSub.subscribe('newProjectElement', optionPanelListeners),
-      PubSub.subscribe('taskFormCreated', taskFormListeners)
+      PubSub.subscribe('taskFormCreated', taskFormListeners),
+      PubSub.subscribe('newProject', addProjectToStorage)
     ],
   };
 })();

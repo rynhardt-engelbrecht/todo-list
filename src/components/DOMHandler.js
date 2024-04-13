@@ -38,12 +38,30 @@ const DOMHandler = (function initializeDOMHandler() {
     return elementToRemove;
   };
 
+  const displayActiveProject = function(msg, data) {
+    console.log(msg);
+
+    const taskList = data.todoList;
+    const taskListContainer = document.querySelector('#task-list');
+    taskListContainer.innerHTML = '';
+    taskList.forEach(e => {
+      addTaskToDOM('manual', e);
+    });
+
+    const projectTitle = document.querySelector('#project-title');
+    projectTitle.textContent = data.title;
+
+    const projectItem = document.querySelector(`.project-item[data-id="${data.id}"]`);
+    projectItem.classList.add('active-project');
+  };
+
   return {
     subscriptions: [
       PubSub.subscribe('newTask', addTaskToDOM),
       PubSub.subscribe('taskRemoved', removeTaskFromDOM),
       PubSub.subscribe('newProject', addProjectToDOM),
       PubSub.subscribe('projectRemoved', removeProjectFromDOM),
+      PubSub.subscribe('activeProjectChange', displayActiveProject),
     ]
   };
 

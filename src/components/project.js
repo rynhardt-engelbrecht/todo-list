@@ -1,12 +1,22 @@
 const PubSub = require('pubsub-js');
 
 class Project {
-  constructor(title = '', todoList = [], id = 0) {
+  constructor(title = '', todoList = []) {
     this.title = title;
     this.todoList = todoList;
-    this.id = id;
+    this.id = this.createID();
 
     PubSub.publish('newProject', this);
+  }
+
+  createID() {
+    const projectList = JSON.parse(localStorage.getItem('project-list'));
+
+    if (projectList) {
+      return projectList[projectList.length - 1].id + 1;
+    }
+
+    return 0;
   }
 
   static updateTitle(obj, title) {

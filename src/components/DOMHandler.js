@@ -73,7 +73,7 @@ const DOMHandler = (function initializeDOMHandler() {
     titleInputLabel.appendChild(titleInput);
 
     const descInputLabel = createElement('Description', 'task-desc-label', 'label');
-    const descInput = createTextarea('', 'task-desc-input', false);
+    const descInput = createInput('', 'task-desc-input');
     descInput.id = 'desc';
     descInputLabel.setAttribute('for', descInput.id);
     descInput.setAttribute('name', descInput.id);
@@ -107,8 +107,16 @@ const DOMHandler = (function initializeDOMHandler() {
       form.appendChild(e);
     });
 
+    const submitBtn = createInput('✔', 'submit-btn', 'submit');
+    form.appendChild(submitBtn);
+
+    const cancelBtn = createElement('X', 'cancel-btn', 'button');
+    form.appendChild(cancelBtn);
+
     const body = document.querySelector('body');
     body.appendChild(form);
+
+    PubSub.publish('taskFormCreated', form);
     return form;
   };
 

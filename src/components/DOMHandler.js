@@ -47,6 +47,21 @@ const DOMHandler = (function initializeDOMHandler() {
     ]
   };
 
+  function formateDateString(dateObj) {
+    const day = dateObj.getDate();
+
+    const monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'October', 'November', 'December'
+    ];
+
+    const monthName = monthNames[dateObj.getMonth()];
+
+    const year = dateObj.getFullYear();
+
+    return `${day} ${monthName} ${year}`;
+  }
+
   function createTaskElement(data) {
     const task = createElement('', 'task-item');
 
@@ -55,7 +70,7 @@ const DOMHandler = (function initializeDOMHandler() {
     const taskComponents = [
       createElement(data.title, 'task-title'),
       createElement(data.desc, 'task-desc'),
-      createElement(data.dueDate, 'task-date'),
+      createElement(formateDateString(data.dueDate), 'task-date'),
       createElement(data.prio, 'task-prio'),
       createInput(false, 'task-check', 'checkbox'),
       optionPanel

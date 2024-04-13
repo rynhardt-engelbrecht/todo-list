@@ -10,7 +10,8 @@ const controller = (() => {
     const prioritySelect = data.querySelector('.task-prio select');
 
     prioritySelect.addEventListener('change', () => {
-      const activeProject = JSON.parse(localStorage.getItem('active-project'));
+      const activeProjectString = localStorage.getItem('active-project') === 'undefined' ? 'null' : localStorage.getItem('active-project');
+      const activeProject = JSON.parse(activeProjectString);
       let taskList = activeProject.taskList;
       let taskObj = taskList.find(p => p.id == data.getAttribute('data-id'));
       taskObj = Task.updatePrio(taskObj, prioritySelect.value);
@@ -28,7 +29,8 @@ const controller = (() => {
     const prioSelect = data.querySelector('.task-prio select')
 
     checkbox.addEventListener('change', () => {
-      const activeProject = JSON.parse(localStorage.getItem('active-project'));
+      const activeProjectString = localStorage.getItem('active-project') === 'undefined' ? 'null' : localStorage.getItem('active-project');
+      const activeProject = JSON.parse(activeProjectString);
       let taskList = activeProject.taskList;
       let taskObj = taskList.find(p => p.id == data.getAttribute('data-id'));
       taskObj = Task.updateChecked(taskObj, checkbox.checked);
@@ -102,7 +104,8 @@ const controller = (() => {
       const element = data;
 
       if (element.getAttribute('data-type') === 'task') {
-        const parentProject = JSON.parse(localStorage.getItem('active-project'));
+        const activeProjectString = localStorage.getItem('active-project') === 'undefined' ? 'null' : localStorage.getItem('active-project');
+        const parentProject = JSON.parse(activeProjectString);
         parentProject.taskList = parentProject.taskList.filter(e => `${e.id}` !== element.getAttribute('data-id'));
 
         updateProjectInStorage('', parentProject);
@@ -115,15 +118,19 @@ const controller = (() => {
   }
 
   const selectProjectListener = function(msg, data) {
-    data.addEventListener('click', e => {
-      const projectList = JSON.parse(localStorage.getItem('project-list'));
+    const projectTitle = data.querySelector('.project-title');
+
+    projectTitle.addEventListener('click', e => {
+      const projectListString = localStorage.getItem('project-list') === 'undefined' ? 'null' : localStorage.getItem('project-list');
+      const projectList = JSON.parse(projectListString);
       const associatedProject = projectList[projectList.findIndex(p => p.id == data.getAttribute('data-id'))];
       PubSub.publish('activeProjectChange', associatedProject);
     });
   }
 
   const addProjectToStorage = function(msg, data) {
-    let storedProjectList = JSON.parse(localStorage.getItem('project-list'));
+    const projectListString = localStorage.getItem('project-list') === 'undefined' ? 'null' : localStorage.getItem('project-list');
+    let storedProjectList = JSON.parse(projectListString);
 
     if (storedProjectList) {
       storedProjectList.push(data);
@@ -135,16 +142,19 @@ const controller = (() => {
   };
 
   const updateProjectInStorage = function(msg, data) {
-    const storedProjectList = JSON.parse(localStorage.getItem('project-list'));
+    const projectListString = localStorage.getItem('project-list') === 'undefined' ? 'null' : localStorage.getItem('project-list');
+    const storedProjectList = JSON.parse(projectListString);
 
     storedProjectList[storedProjectList.findIndex(p => p.id === data.id)] = data;
     localStorage.setItem('project-list', JSON.stringify(storedProjectList));
   }
 
   const removeProjectFromStorage = function(msg, data) {
-    const storedProjectList = JSON.parse(localStorage.getItem('project-list'));
+    const projectListString = localStorage.getItem('project-list') === 'undefined' ? 'null' : localStorage.getItem('project-list');
+    const storedProjectList = JSON.parse(projectListString);
 
-    const activeProject = JSON.parse(localStorage.getItem('active-project'));
+    const activeProjectString = localStorage.getItem('active-project') === 'undefined' ? 'null' : localStorage.getItem('active-project');
+    const activeProject = JSON.parse(activeProjectString);
     const deletedProject = storedProjectList[storedProjectList.findIndex(p => p.id == data)];
 
     const updatedList = storedProjectList.filter(p => p.id != data);

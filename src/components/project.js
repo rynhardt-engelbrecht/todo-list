@@ -11,7 +11,8 @@ class Project {
   }
 
   createID() {
-    const projectList = JSON.parse(localStorage.getItem('project-list'));
+    const projectListString = localStorage.getItem('project-list') === 'undefined' ? 'null' : localStorage.getItem('project-list');
+    const projectList = JSON.parse(projectListString);
 
     if (projectList && projectList.length > 0) {
       return projectList[projectList.length - 1].id + 1;

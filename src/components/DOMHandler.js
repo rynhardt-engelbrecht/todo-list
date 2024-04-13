@@ -55,7 +55,9 @@ const DOMHandler = (function initializeDOMHandler() {
       projectTitle.textContent = data.title;
 
       const projectItem = document.querySelector(`.project-item[data-id="${data.id}"]`);
-      projectItem.classList.add('active-project');
+      if (projectItem) {
+        projectItem.classList.add('active-project');
+      }
     }
   };
 
@@ -65,7 +67,7 @@ const DOMHandler = (function initializeDOMHandler() {
     form.setAttribute('method', 'post');
 
     const titleInputLabel = createElement('Title', 'task-title-label', 'label');
-    const titleInput = createInput('', 'task-title-input');
+    const titleInput = createInput('New Task', 'task-title-input');
     titleInput.id = 'title';
     titleInputLabel.setAttribute('for', titleInput.id);
     titleInput.setAttribute('name', titleInput.id);
@@ -73,7 +75,7 @@ const DOMHandler = (function initializeDOMHandler() {
     titleInputLabel.appendChild(titleInput);
 
     const descInputLabel = createElement('Description', 'task-desc-label', 'label');
-    const descInput = createInput('', 'task-desc-input');
+    const descInput = createInput('Do Stuff', 'task-desc-input');
     descInput.id = 'desc';
     descInputLabel.setAttribute('for', descInput.id);
     descInput.setAttribute('name', descInput.id);
@@ -124,7 +126,7 @@ const DOMHandler = (function initializeDOMHandler() {
     const form = createElement('', 'project-form', 'form');
 
     const titleInputLabel = createElement('Title', 'project-title-label', 'label');
-    const titleInput = createInput('', 'project-title-input');
+    const titleInput = createInput('New Project', 'project-title-input');
     titleInput.id = 'title';
     titleInputLabel.setAttribute('for', titleInput.id);
     titleInput.setAttribute('name', titleInput.id);

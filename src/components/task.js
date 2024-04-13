@@ -2,7 +2,8 @@ const PubSub = require('pubsub-js');
 
 class Task {
   constructor(title = '', desc = '', dueDate = new Date(), prio = 1) {
-    const activeProject = JSON.parse(localStorage.getItem('active-project'));
+    const activeProjectString = localStorage.getItem('active-project') === 'undefined' ? 'null' : localStorage.getItem('active-project');
+    const activeProject = JSON.parse(activeProjectString);
 
     if (activeProject) {
       this.title = title;

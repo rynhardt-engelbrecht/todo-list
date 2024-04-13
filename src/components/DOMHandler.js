@@ -40,22 +40,26 @@ const DOMHandler = (function initializeDOMHandler() {
   };
 
   const displayActiveProject = function(msg, data) {
-    const taskList = data.taskList;
     const taskListContainer = document.querySelector('#task-list');
-    taskListContainer.innerHTML = '';
-    if (taskList) {
-      taskList.forEach(e => {
-        addTaskToDOM('manual', e);
-      });
-    }
-
-    const projectOptionPanel = document.querySelector('#project-tab .option-panel');
-    projectOptionPanel.classList.remove('hidden');
     const projectTitle = document.querySelector('#project-title');
-    projectTitle.textContent = data.title;
+    projectTitle.textContent = 'No Project Selected';
+    taskListContainer.innerHTML = '';
+    if (data) {
+      const taskList = data.taskList;
+      if (taskList) {
+        taskList.forEach(e => {
+          addTaskToDOM('manual', e);
+        });
+      }
 
-    const projectItem = document.querySelector(`.project-item[data-id="${data.id}"]`);
-    projectItem.classList.add('active-project');
+      const projectOptionPanel = document.querySelector('#project-tab .option-panel');
+      projectOptionPanel.classList.remove('hidden');
+
+      projectTitle.textContent = data.title;
+
+      const projectItem = document.querySelector(`.project-item[data-id="${data.id}"]`);
+      projectItem.classList.add('active-project');
+    }
   };
 
   const createTaskForm = function() {

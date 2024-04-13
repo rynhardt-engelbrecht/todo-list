@@ -99,8 +99,15 @@ const controller = (() => {
   const removeProjectFromStorage = function(msg, data) {
     const storedProjectList = JSON.parse(localStorage.getItem('project-list'));
 
+    const deletedProject = storedProjectList[storedProjectList.findIndex(p => p.id == data)];
+
     const updatedList = storedProjectList.filter(p => p.id != data);
     localStorage.setItem('project-list', JSON.stringify(updatedList));
+
+    const activeProject = JSON.parse(localStorage.getItem('active-project'));
+    if (activeProject.id === deletedProject.id) {
+      PubSub.publish('activeProjectChange', null);
+    }
   }
 
   const updateActiveProject = function(msg, data) {

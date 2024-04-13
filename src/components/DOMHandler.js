@@ -4,6 +4,7 @@ const DOMHandler = (function initializeDOMHandler() {
   const addTaskToDOM = function(msg, data) {
     const taskList = document.querySelector('#task-list');
     const taskItem = createTaskElement(data);
+    taskItem.setAttribute('data-type', 'task');
 
     taskList.appendChild(taskItem);
 
@@ -22,8 +23,10 @@ const DOMHandler = (function initializeDOMHandler() {
   const addProjectToDOM = function(msg, data) {
     const projectList = document.querySelector('#project-list');
     const projectItem = createProjectElement(data);
+    projectItem.setAttribute('data-type', 'project');
 
     projectList.appendChild(projectItem);
+    PubSub.publish('newProjectElement', projectItem);
     return projectItem;
   };
 

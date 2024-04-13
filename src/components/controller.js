@@ -62,7 +62,18 @@ const controller = (() => {
     });
 
     deleteBtn.addEventListener('click', e => {
-      data.remove();
+      const element = data;
+
+      if (element.getAttribute('data-type') === 'task') {
+        const parentProject = JSON.parse(localStorage.getItem('active-project'));
+        parentProject.taskList = parentProject.taskList.filter(e => `${e.id}` !== element.getAttribute('data-id'));
+
+        updateProjectInStorage('', parentProject);
+      } else if (element.getAttribute('data-type') === 'project') {
+        removeProjectFromStorage('', element.getAttribute('data-id'));
+      }
+
+      element.remove();
     });
   }
 
@@ -88,7 +99,7 @@ const controller = (() => {
   const removeProjectFromStorage = function(msg, data) {
     const storedProjectList = JSON.parse(localStorage.getItem('project-list'));
 
-    updatedList = storedProjectList.filter(p => p.id !== data.id);
+    const updatedList = storedProjectList.filter(p => p.id != data);
     localStorage.setItem('project-list', JSON.stringify(updatedList));
   }
 
@@ -105,7 +116,8 @@ const controller = (() => {
       PubSub.subscribe('taskFormCreated', taskFormListeners),
       PubSub.subscribe('newProject', addProjectToStorage),
       PubSub.subscribe('activeProjectChange', updateActiveProject),
-      PubSub.subscribe('updateTaskList', updateProjectInStorage)
+      PubSub.subscribe('updateTaskList', updateProjectInStorage),
+      PubSub.subscribe('updateTaskList', updateActiveProject)
     ],
   };
 })();

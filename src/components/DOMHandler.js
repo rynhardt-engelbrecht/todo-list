@@ -39,6 +39,8 @@ const DOMHandler = (function initializeDOMHandler() {
   const displayActiveProject = function(msg, data) {
     const taskListContainer = document.querySelector('#task-list');
     const projectTitle = document.querySelector('#project-title');
+    const projectOptionPanel = document.querySelector('#project-options');
+    projectOptionPanel.classList.add('hidden');
     projectTitle.textContent = 'No Project Selected';
     taskListContainer.innerHTML = '';
     if (data) {

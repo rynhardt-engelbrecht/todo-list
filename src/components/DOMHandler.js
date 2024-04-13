@@ -84,12 +84,14 @@ const DOMHandler = (function initializeDOMHandler() {
     const task = createElement('', 'task-item');
 
     const optionPanel = createOptionPanel();
+    const selectPriority = createElement('', 'task-prio', 'span');
+    selectPriority.appendChild(createSelect([1, 2, 3, 4], '', data.prio));
 
     const taskComponents = [
       createElement(data.title, 'task-title'),
       createTextarea(data.desc, 'task-desc', true),
       createElement(formateDateString(data.dueDate), 'task-date'),
-      createSelect([1, 2, 3, 4], 'task-prio', data.prio),
+      selectPriority,
       createInput(false, 'task-check', 'checkbox'),
       optionPanel
     ];

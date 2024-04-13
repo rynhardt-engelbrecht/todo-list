@@ -90,6 +90,8 @@ body {
 
   border: 1px solid var(--primary-text-color);
   border-radius: 0.4em;
+
+  position: relative;
 }
 
 .task-item * {
@@ -107,6 +109,9 @@ body {
   grid-area: task-desc;
 
   justify-self: flex-start;
+
+  position: absolute;
+  top: 0px;
 }
 
 .task-date {
@@ -118,6 +123,14 @@ body {
 .task-prio {
   grid-area: task-prio;
 
+  box-sizing: content-box;
+  position: relative;
+
+  border: 1px solid var(--primary-text-color);
+  border-radius: 0.4em;
+}
+
+.task-prio select {
   appearance: none;
 
   width: 2.6em;
@@ -134,39 +147,34 @@ body {
   font-weight: bold;
 
   cursor: pointer;
-
-  box-sizing: content-box;
-
-  position: relative;
 }
 
-.task-prio:hover {
-  border: 1px solid var(--primary-text-color);
-  border-radius: 0.4em;
-}
-
-.task-prio:focus {
+.task-prio select:focus {
   outline: none;
 }
 
-select.task-prio::before {
+/* need to figure out why these psuedo-elements won't show up */
+
+.task-prio::before {
   content: 'priority:';
+  display: block;
   position: absolute;
 
   color: var(--primary-text-color);
 
-  top: 50%;
-  left: -10px;
+  top: 10%;
+  left: -180%;
 }
 
-select.task-prio::after {
-  content: '↓';
+.task-prio::after {
+  content: '\25BC';
+  display: block;
   position: absolute;
 
   color: var(--primary-text-color);
 
-  top: 50%;
-  right: 10px;
+  top: 46%;
+  right: 8px;
   transform: translateY(-50%);
   pointer-events: none;
 }

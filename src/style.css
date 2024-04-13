@@ -3,6 +3,10 @@
   --secondary-bg-color: rgb(21, 48, 48);
   --tertiary-bg-color: rgb(11, 26, 26);
   --primary-text-color: rgb(221, 245, 255);
+  --1-priority-color: rgb(146, 56, 20);
+  --2-priority-color: rgb(146, 102, 20);
+  --3-priority-color: rgb(112, 146, 20);
+  --4-priority-color: rgb(14, 112, 83);
 }
 
 html,
@@ -92,6 +96,22 @@ body {
   border-radius: 0.4em;
 
   position: relative;
+}
+
+.task-item[data-prio="1"] {
+  background-color: var(--1-priority-color);
+}
+
+.task-item[data-prio="2"] {
+  background-color: var(--2-priority-color);
+}
+
+.task-item[data-prio="3"] {
+  background-color: var(--3-priority-color);
+}
+
+.task-item[data-prio="4"] {
+  background-color: var(--4-priority-color);
 }
 
 .task-item * {

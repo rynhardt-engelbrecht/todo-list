@@ -8,6 +8,8 @@ const DOMHandler = (function initializeDOMHandler() {
     const taskItem = createTaskElement(data);
 
     taskList.appendChild(taskItem);
+
+    PubSub.publish('newTaskElement', taskItem);
     return taskItem;
   };
 
@@ -101,6 +103,7 @@ const DOMHandler = (function initializeDOMHandler() {
     });
 
     task.setAttribute('data-id', data.id);
+    task.setAttribute('data-prio', data.prio);
 
     return task;
   }

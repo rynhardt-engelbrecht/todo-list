@@ -1,12 +1,13 @@
 const PubSub = require('pubsub-js');
 
 class Project {
-  constructor(title = '', todoList = []) {
+  constructor(title = '', taskList = []) {
     this.title = title;
-    this.todoList = todoList;
+    this.taskList = taskList;
     this.id = this.createID();
 
     PubSub.publish('newProject', this);
+    PubSub.publish('activeProjectChange', this);
   }
 
   createID() {

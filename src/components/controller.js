@@ -55,7 +55,6 @@ const controller = (() => {
     const optionPanel = data.querySelector('.option-panel');
     const editBtn = optionPanel.querySelector('.edit-btn');
     const deleteBtn = optionPanel.querySelector('.delete-btn');
-    console.log(deleteBtn);
 
     editBtn.addEventListener('click', e => {
       const taskForm = DOMHandler.createTaskForm();
@@ -93,6 +92,10 @@ const controller = (() => {
     localStorage.setItem('project-list', JSON.stringify(updatedList));
   }
 
+  const updateActiveProject = function(msg, data) {
+    localStorage.setItem('active-project', JSON.stringify(data));
+  }
+
   return {
     subscriptions: [
       PubSub.subscribe('newTaskElement', prioritySelectListener),
@@ -100,7 +103,9 @@ const controller = (() => {
       PubSub.subscribe('newTaskElement', optionPanelListeners),
       PubSub.subscribe('newProjectElement', optionPanelListeners),
       PubSub.subscribe('taskFormCreated', taskFormListeners),
-      PubSub.subscribe('newProject', addProjectToStorage)
+      PubSub.subscribe('newProject', addProjectToStorage),
+      PubSub.subscribe('activeProjectChange', updateActiveProject),
+      PubSub.subscribe('updateTaskList', updateProjectInStorage)
     ],
   };
 })();

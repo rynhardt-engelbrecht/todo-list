@@ -2,8 +2,6 @@ const PubSub = require('pubsub-js');
 
 const DOMHandler = (function initializeDOMHandler() {
   const addTaskToDOM = function(msg, data) {
-    console.log(msg);
-
     const taskList = document.querySelector('#task-list');
     const taskItem = createTaskElement(data);
 
@@ -22,8 +20,6 @@ const DOMHandler = (function initializeDOMHandler() {
   };
 
   const addProjectToDOM = function(msg, data) {
-    console.log(msg);
-
     const projectList = document.querySelector('#project-list');
     const projectItem = createProjectElement(data);
 
@@ -41,14 +37,14 @@ const DOMHandler = (function initializeDOMHandler() {
   };
 
   const displayActiveProject = function(msg, data) {
-    console.log(msg);
-
-    const taskList = data.todoList;
+    const taskList = data.taskList;
     const taskListContainer = document.querySelector('#task-list');
     taskListContainer.innerHTML = '';
-    taskList.forEach(e => {
-      addTaskToDOM('manual', e);
-    });
+    if (taskList) {
+      taskList.forEach(e => {
+        addTaskToDOM('manual', e);
+      });
+    }
 
     const projectOptionPanel = document.querySelector('#project-tab .option-panel');
     projectOptionPanel.classList.remove('hidden');
@@ -132,18 +128,22 @@ const DOMHandler = (function initializeDOMHandler() {
   };
 
   function formateDateString(dateObj) {
-    const day = dateObj.getDate();
+    if (dateObj) {
+      const day = dateObj.getDate();
 
-    const monthNames = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'October', 'November', 'December'
-    ];
+      const monthNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'October', 'November', 'December'
+      ];
 
-    const monthName = monthNames[dateObj.getMonth()];
+      const monthName = monthNames[dateObj.getMonth()];
 
-    const year = dateObj.getFullYear();
+      const year = dateObj.getFullYear();
 
-    return `${day} ${monthName} ${year}`;
+      return `${day} ${monthName} ${year}`;
+    }
+
+    return '';
   }
 
   function createTaskElement(data) {

@@ -1,3 +1,10 @@
+:root {
+  --background-color: rgb(42, 68, 78);
+  --secondary-bg-color: rgb(21, 48, 48);
+  --tertiary-bg-color: rgb(11, 26, 26);
+  --primary-text-color: rgb(221, 245, 255);
+}
+
 html,
 body {
   margin: 0;
@@ -7,6 +14,279 @@ body {
 
 body {
   display: grid;
-  grid-template-columns: 1fr 4fr;
+  grid-template-columns: 1fr 3fr;
   grid-template-rows: 1fr 6fr;
+
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+  background-color: var(--tertiary-bg-color);
+  color: var(--primary-text-color);
+}
+
+
+#project-tab {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 1.4rem;
+
+  font-size: 28px;
+
+  background-color: var(--secondary-bg-color);
+}
+
+#project-list-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 2.2rem;
+  text-decoration: underline;
+}
+
+#project-list {
+  padding: 1.4rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.project-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 1rem;
+
+  border: 1px solid var(--primary-text-color);
+  border-radius: 0.4em;
+}
+
+.active-project {
+  border-width: 4px;
+
+  font-weight: bold;
+  background-color: rgba(221, 245, 255, 0.12);
+}
+
+#task-list {
+  padding: 1.4rem;
+
+  font-size: 18px;
+
+  background-color: var(--background-color);
+}
+
+.task-item {
+  display: grid;
+  grid-template-areas:
+  "task-title . . task-date task-check option-panel"
+  "task-desc . . . . task-prio";
+
+  gap: 0.4em;
+  padding: 1.8rem;
+
+  border: 1px solid var(--primary-text-color);
+  border-radius: 0.4em;
+}
+
+.task-item * {
+  justify-self: center;
+  align-self: center;
+}
+
+.task-title {
+  grid-area: task-title;
+
+  justify-self: flex-start;
+}
+
+.task-desc {
+  grid-area: task-desc;
+
+  justify-self: flex-start;
+}
+
+.task-date {
+  grid-area: task-date;
+
+  justify-self: flex-end;
+}
+
+.task-prio {
+  grid-area: task-prio;
+
+  appearance: none;
+
+  width: 2.6em;
+  height: 1.8em;
+
+  padding: 0.1em 0.2em;
+
+  border: none;
+
+  background: none;
+
+  color: var(--primary-text-color);
+  font-size: 1rem;
+  font-weight: bold;
+
+  cursor: pointer;
+
+  box-sizing: content-box;
+
+  position: relative;
+}
+
+.task-prio:hover {
+  border: 1px solid var(--primary-text-color);
+  border-radius: 0.4em;
+}
+
+.task-prio:focus {
+  outline: none;
+}
+
+select.task-prio::before {
+  content: 'priority:';
+  position: absolute;
+
+  color: var(--primary-text-color);
+
+  top: 50%;
+  left: -10px;
+}
+
+select.task-prio::after {
+  content: '↓';
+  position: absolute;
+
+  color: var(--primary-text-color);
+
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.task-prio option {
+  background-color: var(--background-color);
+
+  font-weight: bold;
+}
+
+.task-check {
+  grid-area: task-check;
+
+  appearance: none;
+
+  width: 1.6em;
+  height: 1.6em;
+
+  border: 2px solid var(--primary-text-color);
+  border-radius: 50%;
+
+  justify-self: flex-start;
+
+  position: relative;
+  cursor: pointer;
+}
+
+.task-check:checked::before {
+  content: '';
+  display: block;
+
+  width: 0.6em;
+  height: 0.6em;
+
+  border-radius: 50%;
+  background-color: var(--primary-text-color);
+
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.option-panel {
+  grid-area: option-panel;
+
+  display: flex;
+  justify-content: space-between;
+  gap: 0.4em;
+}
+
+.option-panel button {
+  width: 2em;
+  height: 2em;
+
+  background: none;
+
+  padding: 1em;
+
+  /* border: 1px solid var(--primary-text-color); */
+  border: none;
+
+  cursor: pointer;
+}
+
+button:hover::after {
+  position: absolute;
+
+  top: 140%;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  font-weight: bold;
+
+  color: var(--primary-text-color);
+  background-color: var(--background-color);
+
+  padding: 0.4em 0.8em;
+
+  border: 1px solid var(--primary-text-color);
+  border-radius: 0.4em;
+  box-shadow: 1 0.1em 0.2em var(--secondary-bg-color);
+
+  z-index: 999;
+}
+
+button#add-task-btn {
+  background: url('./assets/add-icon.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+
+  position: relative;
+}
+
+button.edit-btn {
+  background: url('./assets/edit-icon.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+
+  position: relative;
+}
+
+button.delete-btn {
+  background: url('./assets/delete-icon.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+
+  position: relative;
+}
+
+button#add-task-btn:hover::after {
+  content: 'Add Task';
+}
+
+button.edit-btn:hover::after {
+  content: 'Edit';
+}
+
+button.delete-btn:hover::after {
+  content: 'Delete';
 }

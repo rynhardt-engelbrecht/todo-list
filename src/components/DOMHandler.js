@@ -9,11 +9,14 @@ const DOMHandler = (function initializeDOMHandler() {
       const taskItem = createTaskElement(data);
 
       taskList.appendChild(taskItem);
+      return taskItem;
     },
     removeTaskFromDOM: function(msg, data) {
+      console.log(msg);
       const elementToRemove = document.querySelector(`.task-item[data-id="${data.id}"]`);
 
       elementToRemove.remove();
+      return elementToRemove;
     },
     subscriptions: [
       PubSub.subscribe('newTask', this.addTaskToDOM),

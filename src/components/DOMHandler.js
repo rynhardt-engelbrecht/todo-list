@@ -1,45 +1,49 @@
 const PubSub = require('pubsub-js');
 
 const DOMHandler = (function initializeDOMHandler() {
+  const addTaskToDOM = function(msg, data) {
+    console.log(msg);
+
+    const taskList = document.querySelector('#task-list');
+    const taskItem = createTaskElement(data);
+
+    taskList.appendChild(taskItem);
+    return taskItem;
+  };
+
+  const removeTaskFromDOM = function(msg, data) {
+    console.log(msg);
+    const elementToRemove = document.querySelector(`.task-item[data-id="${data.id}"]`);
+
+    elementToRemove.remove();
+    return elementToRemove;
+  };
+
+  const addProjectToDOM = function(msg, data) {
+    console.log(msg);
+
+    const projectList = document.querySelector('#project-list');
+    const projectItem = createProjectElement(data);
+
+    projectList.appendChild(projectItem);
+    return projectItem;
+  };
+
+  const removeProjectFromDOM = function(msg, data) {
+    console.log(msg);
+
+    const elementToRemove = document.querySelector(`.project-item[data-id="${data.id}]`);
+
+    elementToRemove.remove();
+    return elementToRemove;
+  };
+
   return {
-    addTaskToDOM: function(msg, data) {
-      console.log(msg);
-
-      const taskList = document.querySelector('#task-list');
-      const taskItem = createTaskElement(data);
-
-      taskList.appendChild(taskItem);
-      return taskItem;
-    },
-    removeTaskFromDOM: function(msg, data) {
-      console.log(msg);
-      const elementToRemove = document.querySelector(`.task-item[data-id="${data.id}"]`);
-
-      elementToRemove.remove();
-      return elementToRemove;
-    },
-    addProjectToDOM: function(msg, data) {
-      console.log(msg);
-
-      const projectList = document.querySelector('#project-list');
-      const projectItem = createProjectElement(data);
-
-      projectList.appendChild(projectItem);
-      return projectItem;
-    },
-    removeProjectFromDOM: function(msg, data) {
-      console.log(msg);
-
-      const elementToRemove = document.querySelector(`.project-item[data-id="${data.id}]`);
-
-      elementToRemove.remove();
-      return elementToRemove;
-    },
     subscriptions: [
-      PubSub.subscribe('newTask', this.addTaskToDOM),
-      PubSub.subscribe('taskRemoved', this.removeTaskFromDOM),
-      PubSub.subscribe('newProject', this.addProjectToDOM),
-      PubSub.subscribe('projectRemoved', this.removeProjectFromDOM),
+      PubSub.subscribe('newTask', addTaskToDOM),
+      PubSub.subscribe('taskRemoved', removeTaskFromDOM),
+      PubSub.subscribe('newProject', addProjectToDOM),
+      PubSub.subscribe('projectRemoved', removeProjectFromDOM),
     ]
   };
 

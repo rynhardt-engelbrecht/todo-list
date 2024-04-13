@@ -1,5 +1,7 @@
 const PubSub = require('pubsub-js');
 
+import createTask from './task.js';
+
 const controller = (() => {
 
   const prioritySelectListener = function(msg, data) {
@@ -27,10 +29,34 @@ const controller = (() => {
     });
   }
 
+  const taskFormListeners = function(msg, data) {
+    const cancelBtn = data.querySelector('.cancel-btn');
+    const submitBtn = data.querySelector('.submit-btn');
+
+    cancelBtn.addEventListener('click', e => {
+      e.preventDefault();
+
+      data.remove();
+    });
+
+    submitBtn.addEventListener('click', e => {
+      e.preventDefault();
+
+      const title = data.querySelector('#title').value;
+      const desc = data.querySelector('#desc').value;
+      const date = data.querySelector('#date').value;
+      const prio = data.querySelector('#prio').value;
+
+      createTask(title, desc, new Date(date), prio, false, 0);
+      data.remove();
+    });
+  }
+
   return {
     subscriptions: [
       PubSub.subscribe('newTaskElement', prioritySelectListener),
-      PubSub.subscribe('newTaskElement', taskCheckListener)
+      PubSub.subscribe('newTaskElement', taskCheckListener),
+      PubSub.subscribe('taskFormCreated', taskFormListeners)
     ],
   };
 })();

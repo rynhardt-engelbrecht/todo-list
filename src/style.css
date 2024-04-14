@@ -83,7 +83,9 @@ body {
 
   border: 1px solid var(--primary-text-color);
   border-radius: 0.4em;
+}
 
+.project-item .project-title {
   cursor: pointer;
 }
 
@@ -155,6 +157,9 @@ body {
 
 .task-title {
   grid-area: task-title;
+  grid-column: span 2;
+  max-width: calc((100% / 3) * 2);
+  overflow-x: hidden;
 
   justify-self: flex-start;
 }

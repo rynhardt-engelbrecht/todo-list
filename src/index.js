@@ -3,15 +3,19 @@ import './style.css';
 import DOMHandler from './components/DOMHandler.js';
 import controller from './components/controller.js';
 
+const PubSub = require('pubsub-js');
+
 const addTaskBtn = document.querySelector('#add-task-btn');
 const addProjectBtn = document.querySelector('#add-project-btn');
 
 addTaskBtn.addEventListener('click', () => {
   const form = DOMHandler.createTaskForm();
+  PubSub.publish('taskFormCreated', form);
 });
 
 addProjectBtn.addEventListener('click', () => {
   const form = DOMHandler.createProjectForm();
+  PubSub.publish('projectFormCreated', form);
 });
 
 /*

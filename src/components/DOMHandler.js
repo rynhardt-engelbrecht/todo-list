@@ -63,13 +63,14 @@ const DOMHandler = (function initializeDOMHandler() {
     }
   };
 
-  const createTaskForm = function() {
+  const createTaskForm = function(defaultTitle = 'New Task', defaultDesc = 'Do Stuff',
+  defaultDate = new Date(), defaultPrio = 1) {
     const form = createElement('', 'task-form', 'form');
     form.setAttribute('action', '#');
     form.setAttribute('method', 'post');
 
     const titleInputLabel = createElement('Title', 'task-title-label', 'label');
-    const titleInput = createInput('New Task', 'task-title-input');
+    const titleInput = createInput(defaultTitle, 'task-title-input');
     titleInput.id = 'title';
     titleInputLabel.setAttribute('for', titleInput.id);
     titleInput.setAttribute('name', titleInput.id);
@@ -77,7 +78,7 @@ const DOMHandler = (function initializeDOMHandler() {
     titleInputLabel.appendChild(titleInput);
 
     const descInputLabel = createElement('Description', 'task-desc-label', 'label');
-    const descInput = createInput('Do Stuff', 'task-desc-input');
+    const descInput = createInput(defaultDesc, 'task-desc-input');
     descInput.id = 'desc';
     descInputLabel.setAttribute('for', descInput.id);
     descInput.setAttribute('name', descInput.id);
@@ -85,7 +86,7 @@ const DOMHandler = (function initializeDOMHandler() {
     descInputLabel.appendChild(descInput);
 
     const dateInputLabel = createElement('Due Date', 'task-date-label', 'label');
-    const dateInput = createInput('', 'task-date-input', 'date');
+    const dateInput = createInput(defaultDate, 'task-date-input', 'date');
     dateInput.id = 'date';
     dateInputLabel.setAttribute('for', dateInput.id);
     dateInput.setAttribute('name', dateInput.id);
@@ -93,7 +94,7 @@ const DOMHandler = (function initializeDOMHandler() {
     dateInputLabel.appendChild(dateInput);
 
     const prioInputLabel = createElement('Priority Level', 'task-prio-label', 'label');
-    const prioInput = createSelect([1, 2, 3, 4], 'task-prio-input', '1');
+    const prioInput = createSelect([1, 2, 3, 4], 'task-prio-input', defaultPrio);
     prioInput.id = 'prio';
     prioInputLabel.setAttribute('for', prioInput.id);
     prioInput.setAttribute('name', prioInput.id);
@@ -120,15 +121,14 @@ const DOMHandler = (function initializeDOMHandler() {
     const body = document.querySelector('body');
     body.appendChild(form);
 
-    PubSub.publish('taskFormCreated', form);
     return form;
   };
 
-  const createProjectForm = function() {
+  const createProjectForm = function(defaultTitle = 'New Project') {
     const form = createElement('', 'project-form', 'form');
 
     const titleInputLabel = createElement('Title', 'project-title-label', 'label');
-    const titleInput = createInput('New Project', 'project-title-input');
+    const titleInput = createInput(defaultTitle, 'project-title-input');
     titleInput.id = 'title';
     titleInputLabel.setAttribute('for', titleInput.id);
     titleInput.setAttribute('name', titleInput.id);
@@ -146,7 +146,6 @@ const DOMHandler = (function initializeDOMHandler() {
     const body = document.querySelector('body');
     body.appendChild(form);
 
-    PubSub.publish('projectFormCreated', form);
     return form;
   }
 
@@ -168,6 +167,22 @@ const DOMHandler = (function initializeDOMHandler() {
     displayActiveProject('', activeProject);
   }
 
+  const updateTaskDOM = function(msg, data) {
+    const taskElement = document.querySelector(`.task-item[data-id="${data.id}"]`);
+
+    const titleElement = taskElement.querySelector('.task-title');
+    const descElement = taskElement.querySelector('.task-desc');
+    const dateElement = taskElement.querySelector('.task-date');
+    const prioElement = taskElement.querySelector('.task-prio select');
+
+    titleElement.textContent = data.title;
+    descElement.textContent = data.desc;
+    dateElement.textContent = data.dueDate;
+    prioElement.value = data.prio;
+
+    return taskElement;
+  };
+
   return {
     startUpDOM,
     createTaskForm,
@@ -178,6 +193,7 @@ const DOMHandler = (function initializeDOMHandler() {
       PubSub.subscribe('newProject', addProjectToDOM),
       PubSub.subscribe('projectRemoved', removeProjectFromDOM),
       PubSub.subscribe('activeProjectChange', displayActiveProject),
+      PubSub.subscribe('updateTaskDOM', updateTaskDOM),
     ]
   };
 
@@ -210,7 +226,7 @@ const DOMHandler = (function initializeDOMHandler() {
     const optionPanel = createOptionPanel();
     const selectPriority = createElement('', 'task-prio', 'span');
     const select = createSelect([1, 2, 3, 4], '', data.prio);
-    const checkbox = createInput(false, 'task-check', 'checkbox');
+    const checkbox = createInput(data.isChecked, 'task-check', 'checkbox');
     selectPriority.appendChild(select);
     if (data.isChecked) {
       task.classList.add('complete');

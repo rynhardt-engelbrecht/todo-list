@@ -96,8 +96,22 @@ const controller = (() => {
     const deleteBtn = optionPanel.querySelector('.delete-btn');
 
     editBtn.addEventListener('click', e => {
-      const taskForm = DOMHandler.createTaskForm();
-      PubSub.publish('editTaskFormCreated', taskForm);
+      if (data.getAttribute('data-type') === 'task') {
+        const activeProjectString = localStorage.getItem('active-project') === 'undefined' ? 'null' : localStorage.getItem('active-project');
+        const parentProject = JSON.parse(activeProjectString);
+        const taskObj = parentProject.taskList[parentProject.taskList.findIndex(p => p.id == data.getAttribute('data-id'))];
+
+        const taskForm = DOMHandler.createTaskForm(taskObj.title, taskObj.desc, taskObj.dueDate, taskObj.prio);
+        PubSub.publish('editTaskFormCreated', { task: taskObj, form: taskForm });
+      } else if (data.getAttribute('data-type') === 'project') {
+        const projectListString = localStorage.getItem('project-list') === 'undefined' ? 'null' : localStorage.getItem('project-list');
+        const projectList = JSON.parse(projectListString);
+        console.log(projectList);
+        const projectObj = projectList[projectList.findIndex(p => p.id == data.getAttribute('data-id'))];
+
+        const projectForm = DOMHandler.createProjectForm(projectObj.title);
+        PubSub.publish('editProjectFormCreated', { project: projectObj, form: projectForm });
+      }
     });
 
     deleteBtn.addEventListener('click', e => {
@@ -178,6 +192,44 @@ const controller = (() => {
     }
   }
 
+  const editTaskForm = function(msg, data) {
+    const cancelBtn = data.form.querySelector('.cancel-btn');
+    const submitBtn = data.form.querySelector('.submit-btn');
+
+    cancelBtn.addEventListener('click', e => {
+      e.preventDefault();
+
+      data.form.remove();
+    });
+
+    submitBtn.addEventListener('click', e => {
+      e.preventDefault();
+
+      const title = data.form.querySelector('#title').value;
+      const desc = data.form.querySelector('#desc').value;
+      const date = data.form.querySelector('#date').value;
+      const prio = data.form.querySelector('#prio').value;
+
+      const activeProjectString = localStorage.getItem('active-project') === 'undefined' ? 'null' : localStorage.getItem('active-project');
+      const activeProject = JSON.parse(activeProjectString);
+      const activeTaskList = activeProject.taskList;
+      const objToUpdate = activeTaskList.find(p => p.id == data.task.id);
+      Task.updateInfo(objToUpdate, title, desc, date, prio);
+
+      const objIndex = activeTaskList.findIndex(p => [p.id == data.task.id]);
+      activeProject.taskList[objIndex] = objToUpdate;
+
+      PubSub.publish('updateTaskList', activeProject);
+      PubSub.publish('updateTaskDOM', objToUpdate);
+
+      data.form.remove();
+    });
+  };
+
+  const editProjectForm = function(msg, data) {
+
+  }
+
   return {
     subscriptions: [
       PubSub.subscribe('newTaskElement', prioritySelectListener),
@@ -190,7 +242,9 @@ const controller = (() => {
       PubSub.subscribe('newProject', addProjectToStorage),
       PubSub.subscribe('activeProjectChange', updateActiveProject),
       PubSub.subscribe('updateTaskList', updateProjectInStorage),
-      PubSub.subscribe('updateTaskList', updateActiveProject)
+      PubSub.subscribe('updateTaskList', updateActiveProject),
+      PubSub.subscribe('editTaskFormCreated', editTaskForm),
+      // PubSub.subscribe('editProjectFormCreated', editProjectForm)
     ],
   };
 })();

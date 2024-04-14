@@ -1,4 +1,5 @@
 const PubSub = require('pubsub-js');
+import controller from './controller.js';
 
 const DOMHandler = (function initializeDOMHandler() {
   const addTaskToDOM = function(msg, data) {
@@ -183,6 +184,16 @@ const DOMHandler = (function initializeDOMHandler() {
     return taskElement;
   };
 
+  const updateProjectDOM = function(msg, data) {
+    const projectElement = document.querySelector(`.project-item[data-id="${data.id}"]`);
+
+    const titleElement = projectElement.querySelector('.project-title');
+
+    titleElement.textContent = data.title;
+
+    return projectElement;
+  }
+
   return {
     startUpDOM,
     createTaskForm,
@@ -194,6 +205,7 @@ const DOMHandler = (function initializeDOMHandler() {
       PubSub.subscribe('projectRemoved', removeProjectFromDOM),
       PubSub.subscribe('activeProjectChange', displayActiveProject),
       PubSub.subscribe('updateTaskDOM', updateTaskDOM),
+      PubSub.subscribe('updateProjectDOM', updateProjectDOM)
     ]
   };
 

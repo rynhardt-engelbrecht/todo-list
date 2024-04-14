@@ -10,8 +10,7 @@ const controller = (() => {
     const prioritySelect = data.querySelector('.task-prio select');
 
     prioritySelect.addEventListener('change', () => {
-      const activeProjectString = localStorage.getItem('active-project') === 'undefined' ? 'null' : localStorage.getItem('active-project');
-      const activeProject = JSON.parse(activeProjectString);
+      const activeProject = getActiveProject();
       let taskList = activeProject.taskList;
       let taskObj = taskList.find(p => p.id == data.getAttribute('data-id'));
       taskObj = Task.updatePrio(taskObj, prioritySelect.value);
@@ -29,8 +28,7 @@ const controller = (() => {
     const prioSelect = data.querySelector('.task-prio select')
 
     checkbox.addEventListener('change', () => {
-      const activeProjectString = localStorage.getItem('active-project') === 'undefined' ? 'null' : localStorage.getItem('active-project');
-      const activeProject = JSON.parse(activeProjectString);
+      const activeProject = getActiveProject();
       let taskList = activeProject.taskList;
       let taskObj = taskList.find(p => p.id == data.getAttribute('data-id'));
       taskObj = Task.updateChecked(taskObj, checkbox.checked);
@@ -97,16 +95,13 @@ const controller = (() => {
 
     editBtn.addEventListener('click', e => {
       if (data.getAttribute('data-type') === 'task') {
-        const activeProjectString = localStorage.getItem('active-project') === 'undefined' ? 'null' : localStorage.getItem('active-project');
-        const parentProject = JSON.parse(activeProjectString);
+        const parentProject = getActiveProject();
         const taskObj = parentProject.taskList[parentProject.taskList.findIndex(p => p.id == data.getAttribute('data-id'))];
 
         const taskForm = DOMHandler.createTaskForm(taskObj.title, taskObj.desc, taskObj.dueDate, taskObj.prio);
         PubSub.publish('editTaskFormCreated', { task: taskObj, form: taskForm });
       } else if (data.getAttribute('data-type') === 'project') {
-        const projectListString = localStorage.getItem('project-list') === 'undefined' ? 'null' : localStorage.getItem('project-list');
-        const projectList = JSON.parse(projectListString);
-        console.log(projectList);
+        const projectList = getProjectList();
         const projectObj = projectList[projectList.findIndex(p => p.id == data.getAttribute('data-id'))];
 
         const projectForm = DOMHandler.createProjectForm(projectObj.title);
@@ -118,8 +113,7 @@ const controller = (() => {
       const element = data;
 
       if (element.getAttribute('data-type') === 'task') {
-        const activeProjectString = localStorage.getItem('active-project') === 'undefined' ? 'null' : localStorage.getItem('active-project');
-        const parentProject = JSON.parse(activeProjectString);
+        const parentProject = getActiveProject();
         parentProject.taskList = parentProject.taskList.filter(e => `${e.id}` !== element.getAttribute('data-id'));
 
         updateProjectInStorage('', parentProject);
@@ -135,16 +129,14 @@ const controller = (() => {
     const projectTitle = data.querySelector('.project-title');
 
     projectTitle.addEventListener('click', e => {
-      const projectListString = localStorage.getItem('project-list') === 'undefined' ? 'null' : localStorage.getItem('project-list');
-      const projectList = JSON.parse(projectListString);
+      const projectList = getProjectList();
       const associatedProject = projectList[projectList.findIndex(p => p.id == data.getAttribute('data-id'))];
       PubSub.publish('activeProjectChange', associatedProject);
     });
   }
 
   const addProjectToStorage = function(msg, data) {
-    const projectListString = localStorage.getItem('project-list') === 'undefined' ? 'null' : localStorage.getItem('project-list');
-    let storedProjectList = JSON.parse(projectListString);
+    let storedProjectList = getProjectList();
 
     if (storedProjectList) {
       storedProjectList.push(data);
@@ -156,19 +148,16 @@ const controller = (() => {
   };
 
   const updateProjectInStorage = function(msg, data) {
-    const projectListString = localStorage.getItem('project-list') === 'undefined' ? 'null' : localStorage.getItem('project-list');
-    const storedProjectList = JSON.parse(projectListString);
+    const storedProjectList = getProjectList();
 
     storedProjectList[storedProjectList.findIndex(p => p.id === data.id)] = data;
     localStorage.setItem('project-list', JSON.stringify(storedProjectList));
   }
 
   const removeProjectFromStorage = function(msg, data) {
-    const projectListString = localStorage.getItem('project-list') === 'undefined' ? 'null' : localStorage.getItem('project-list');
-    const storedProjectList = JSON.parse(projectListString);
+    const storedProjectList = getProjectList();
 
-    const activeProjectString = localStorage.getItem('active-project') === 'undefined' ? 'null' : localStorage.getItem('active-project');
-    const activeProject = JSON.parse(activeProjectString);
+    const activeProject = getActiveProject();
     const deletedProject = storedProjectList[storedProjectList.findIndex(p => p.id == data)];
 
     const updatedList = storedProjectList.filter(p => p.id != data);
@@ -205,32 +194,32 @@ const controller = (() => {
     submitBtn.addEventListener('click', e => {
       e.preventDefault();
 
-      const title = data.form.querySelector('#title').value;
-      const desc = data.form.querySelector('#desc').value;
-      const date = data.form.querySelector('#date').value;
-      const prio = data.form.querySelector('#prio').value;
-
-      const activeProjectString = localStorage.getItem('active-project') === 'undefined' ? 'null' : localStorage.getItem('active-project');
-      const activeProject = JSON.parse(activeProjectString);
-      const activeTaskList = activeProject.taskList;
-      const objToUpdate = activeTaskList.find(p => p.id == data.task.id);
-      Task.updateInfo(objToUpdate, title, desc, date, prio);
-
-      const objIndex = activeTaskList.findIndex(p => [p.id == data.task.id]);
-      activeProject.taskList[objIndex] = objToUpdate;
-
-      PubSub.publish('updateTaskList', activeProject);
-      PubSub.publish('updateTaskDOM', objToUpdate);
-
+      updateTaskObj(data.task, data.form);
       data.form.remove();
     });
   };
 
   const editProjectForm = function(msg, data) {
+    const cancelBtn = data.form.querySelector('.cancel-btn');
+    const submitBtn = data.form.querySelector('.submit-btn');
 
+    cancelBtn.addEventListener('click', e => {
+      e.preventDefault();
+
+      data.form.remove();
+    });
+
+    submitBtn.addEventListener('click', e => {
+      e.preventDefault();
+
+      updateProjectObj(data.project, data.form);
+      data.form.remove();
+    })
   }
 
   return {
+    getActiveProject,
+    getProjectList,
     subscriptions: [
       PubSub.subscribe('newTaskElement', prioritySelectListener),
       PubSub.subscribe('newTaskElement', taskCheckListener),
@@ -244,7 +233,58 @@ const controller = (() => {
       PubSub.subscribe('updateTaskList', updateProjectInStorage),
       PubSub.subscribe('updateTaskList', updateActiveProject),
       PubSub.subscribe('editTaskFormCreated', editTaskForm),
-      // PubSub.subscribe('editProjectFormCreated', editProjectForm)
+      PubSub.subscribe('editProjectFormCreated', editProjectForm),
+      PubSub.subscribe('updateProjectInfo', updateProjectInStorage),
     ],
   };
+
+  function updateTaskObj(task, form) {
+    const newTitle = form.querySelector('#title').value;
+    const newDesc = form.querySelector('#desc').value;
+    const newDate = form.querySelector('#date').value;
+    const newPrio = form.querySelector('#prio').value;
+
+    const activeProject = getActiveProject();
+    const activeTaskList = activeProject.taskList;
+    const objToUpdate = activeTaskList.find(p => p.id == task.id);
+
+    Task.updateInfo(objToUpdate, newTitle, newDesc, newDate, newPrio);
+
+    const objIndex = activeTaskList.findIndex(p => p.id == task.id);
+    activeProject.taskList[objIndex] = objToUpdate;
+
+    PubSub.publish('updateTaskList', activeProject);
+    PubSub.publish('updateTaskDOM', objToUpdate);
+  }
+
+  function updateProjectObj(project, form) {
+    const newTitle = form.querySelector('#title').value;
+
+    const projectList = getProjectList();
+    const updatedProject = projectList.find(p => p.id == project.id);
+
+    Project.updateTitle(updatedProject, newTitle);
+
+    const projectIndex = projectList.findIndex(p => p.id == project.id);
+    projectList[projectIndex] = updatedProject;
+
+    if (getActiveProject().id == updatedProject.id) {
+      PubSub.publish('activeProjectChange', updatedProject);
+    }
+
+    PubSub.publish('updateProjectInfo', updatedProject);
+    PubSub.publish('updateProjectDOM', updatedProject);
+  }
+
+  function getProjectList() {
+    const projectListString = localStorage.getItem('active-project') === 'undefined' ? 'null' : localStorage.getItem('project-list');
+    return JSON.parse(projectListString);
+  }
+
+  function getActiveProject() {
+    const activeProjectString = localStorage.getItem('active-project') === 'undefined' ? 'null' : localStorage.getItem('active-project');
+    return JSON.parse(activeProjectString);
+  }
 })();
+
+export default controller;
